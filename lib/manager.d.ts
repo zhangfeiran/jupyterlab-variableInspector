@@ -1,5 +1,5 @@
 import { VariableInspectorPanel, IVariableInspector } from "./variableinspector";
-import { Token } from '@phosphor/coreutils';
+import { Token } from '@lumino/coreutils';
 import { VariableInspectionHandler } from "./handler";
 export declare const IVariableInspectorManager: Token<IVariableInspectorManager>;
 export interface IVariableInspectorManager {

@@ -1,6 +1,6 @@
-import { IClientSession } from "@jupyterlab/apputils";
-import { KernelMessage, Kernel } from "@jupyterlab/services";
-import { ISignal } from "@phosphor/signaling";
+import { ISessionContext } from "@jupyterlab/apputils";
+import { KernelMessage } from "@jupyterlab/services";
+import { ISignal } from "@lumino/signaling";
 /**
  * Connector class that handles execute request to a kernel
  */
@@ -9,7 +9,7 @@ export declare class KernelConnector {
     private _kernelRestarted;
     constructor(options: KernelConnector.IOptions);
     get kernelRestarted(): ISignal<KernelConnector, Promise<void>>;
-    get kernelType(): string;
+    get kernelLanguage(): Promise<string>;
     get kernelName(): string;
     /**
      *  A Promise that is fulfilled when the session associated w/ the connector is ready.
@@ -18,7 +18,7 @@ export declare class KernelConnector {
     /**
      *  A signal emitted for iopub messages of the kernel associated with the kernel.
      */
-    get iopubMessage(): ISignal<IClientSession, KernelMessage.IMessage>;
+    get iopubMessage(): ISignal<ISessionContext, KernelMessage.IMessage>;
     /**
      * Executes the given request on the kernel associated with the connector.
      * @param content: IExecuteRequestMsg to forward to the kernel.
@@ -26,10 +26,10 @@ export declare class KernelConnector {
      * @returns Promise<KernelMessage.IExecuteReplyMsg>
      */
     fetch(content: KernelMessage.IExecuteRequestMsg['content'], ioCallback: (msg: KernelMessage.IIOPubMessage) => any): Promise<KernelMessage.IExecuteReplyMsg>;
-    execute(content: KernelMessage.IExecuteRequestMsg['content']): Kernel.IShellFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
+    execute(content: KernelMessage.IExecuteRequestMsg['content']): import("@jupyterlab/services/lib/kernel/kernel").IShellFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
 }
 export declare namespace KernelConnector {
     interface IOptions {
-        session: IClientSession;
+        session: ISessionContext;
     }
 }

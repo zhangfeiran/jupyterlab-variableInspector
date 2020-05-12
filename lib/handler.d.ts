@@ -1,10 +1,10 @@
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { IDisposable } from '@phosphor/disposable';
+import { IDisposable } from '@lumino/disposable';
 import { IVariableInspector } from './variableinspector';
 import { KernelConnector } from "./kernelconnector";
 import { KernelMessage, Kernel } from "@jupyterlab/services";
-import { ISignal } from "@phosphor/signaling";
-import { DataModel } from "@phosphor/datagrid";
+import { ISignal } from "@lumino/signaling";
+import { DataModel } from "@lumino/datagrid";
 /**
  * An object that handles code inspection.
  */

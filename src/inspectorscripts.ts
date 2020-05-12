@@ -30,11 +30,12 @@ np = None
 pd = None
 pyspark = None
 tf = None
+torch = None
 ipywidgets = None
 
 
 def _check_imported():
-    global np, pd, pyspark, tf, ipywidgets
+    global np, pd, pyspark, tf, torch, ipywidgets
     pkg_resources = [dist.project_name.replace("Python","") for
                      dist in __import__("pkg_resources").working_set]
     if 'numpy' in pkg_resources:
@@ -62,6 +63,12 @@ def _check_imported():
             import keras.backend as K
         except ImportError:
             tf = None
+    
+    if 'torch' in pkg_resources:
+        try:
+            import torch
+        except ImportError:
+            torch = None
 
     if 'ipywidgets' in pkg_resources:
         try:
@@ -77,6 +84,8 @@ def _jupyterlab_variableinspector_getsizeof(x):
         return "?"
     elif tf and isinstance(x, tf.Variable):
         return "?"
+    elif torch and isinstance(x, torch.Tensor):
+        return x.element_size() * x.nelement()
     elif pd and type(x).__name__ == 'DataFrame':
         return x.memory_usage().sum()
     else:
@@ -99,6 +108,9 @@ def _jupyterlab_variableinspector_getshapeof(x):
     if tf and isinstance(x, tf.Tensor):
         shape = " x ".join([str(int(i)) for i in x.shape])
         return "%s" % shape
+    if torch and isinstance(x, torch.Tensor):
+        shape = " x ".join([str(int(i)) for i in x.shape])
+        return "%s" % shape
     if isinstance(x, list):
         return "%s" % len(x)
     if isinstance(x, dict):
@@ -117,6 +129,11 @@ def _jupyterlab_variableinspector_getcontentof(x):
         content = content.replace("\\n", "")
     elif np and isinstance(x, np.ndarray):
         content = x.__repr__()
+    elif torch and isinstance(x, torch.Tensor):
+        if x.nelement() < 1048576:
+            content = x.__repr__()
+        else:
+            content = 'too big'
     else:
         content = str(x)
 
@@ -158,13 +175,15 @@ def _jupyterlab_variableinspector_dict_list():
                 return True
             if tf and isinstance(obj, tf.Variable):
                 return True
+            if torch and isinstance(obj, torch.Tensor):
+                return True
             if pd and pd is not None and (
                 isinstance(obj, pd.core.frame.DataFrame)
                 or isinstance(obj, pd.core.series.Series)):
                 return True
             if str(obj)[0] == "<":
                 return False
-            if  v in ['np', 'pd', 'pyspark', 'tf', 'ipywidgets']:
+            if  v in ['np', 'pd', 'pyspark', 'tf', 'torch', 'ipywidgets']:
                 return obj is not None
             if str(obj).startswith("_Feature"):
                 # removes tf/keras objects

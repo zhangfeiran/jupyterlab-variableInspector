@@ -1,9 +1,9 @@
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
-import { ISignal } from '@phosphor/signaling';
-import { Token } from '@phosphor/coreutils';
-import { Widget } from '@phosphor/widgets';
-import { DataModel } from "@phosphor/datagrid";
+import { ISignal } from '@lumino/signaling';
+import { Token } from '@lumino/coreutils';
+import { Widget } from '@lumino/widgets';
+import { DataModel } from "@lumino/datagrid";
 import '../style/index.css';
 /**
  * The inspector panel token.
@@ -43,7 +43,6 @@ export declare namespace IVariableInspector {
     }
     interface IVariableTitle {
         kernelName?: string;
-        languageName?: string;
         contextName?: string;
     }
 }
