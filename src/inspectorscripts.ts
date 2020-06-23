@@ -270,8 +270,13 @@ def _jupyterlab_variableinspector_deletevariable(x):
     vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.size < 1048576)
     obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
                       
-    obj.rownames <- napply(names, rownames)
-    has_rownames <- obj.rownames != "NULL"
+    # obj.rownames <- napply(names, rownames)
+    # has_rownames <- obj.rownames != "NULL"
+    has_rownames = obj.size < 1048576)
+    obj.rownames <- rep("NA", length(names))
+    obj.rownames[has_rownames] = napply(names[has_rownames], rownames)
+    has_rownames = has_rownames & obj.rownames != "NULL"
+
     obj.rownames <- sapply(obj.rownames[has_rownames], function(x) paste(x,
         collapse=", "))
     obj.rownames.short <- sapply(obj.rownames, function(x) paste(substr(x, 1, 150), "...."))
@@ -282,7 +287,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
                                
     # obj.colnames <- napply(names, colnames)
     # has_colnames <- obj.colnames != "NULL"
-    has_colnames <- (obj.type != "table" & obj.type != 'array')
+    has_colnames <- (obj.type != "table" & obj.type != 'array' & obj.size < 1048576)
     obj.colnames <- rep("NA", length(names))
     obj.colnames[has_colnames] <- napply(names[has_colnames], colnames)
     has_colnames <- has_colnames & obj.colnames != "NULL"
