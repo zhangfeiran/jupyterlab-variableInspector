@@ -272,7 +272,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
                       
     # obj.rownames <- napply(names, rownames)
     # has_rownames <- obj.rownames != "NULL"
-    has_rownames = obj.size < 1048576)
+    has_rownames = obj.size < 1048576
     obj.rownames <- rep("NA", length(names))
     obj.rownames[has_rownames] = napply(names[has_rownames], rownames)
     has_rownames = has_rownames & obj.rownames != "NULL"
