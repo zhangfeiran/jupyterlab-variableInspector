@@ -1,5 +1,5 @@
 *.bundle.*
-lib/
+# lib/
 node_modules/
 *.egg-info/
 .ipynb_checkpoints
@@ -11,3 +11,4 @@ yarn.lock
 .ipynb
 .idea
 .iml
+lib/tsconfig.tsbuildinfo
