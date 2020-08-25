@@ -269,7 +269,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
     obj.rownames.short <- sapply(obj.rownames, function(x) paste(substr(x, 1, 150), "...."))
     obj.rownames <- ifelse(nchar(obj.rownames) > 154, obj.rownames.short, obj.rownames)
     obj.rownames <- sapply(obj.rownames, function(x) paste("Row names: ",x))
-    obj.content[has_rownames] <- obj.rownames
+    obj.content[has_rownames] <- paste(obj.rownames,obj.content[has_rownames])
                                
                                
     # obj.colnames <- napply(names, colnames)
@@ -287,7 +287,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
         obj.colnames)
     obj.colnames <- sapply(obj.colnames, function(x) paste("Column names: ",x))
                     
-    obj.content[has_colnames] <- obj.colnames
+    obj.content[has_colnames] <- paste(obj.colnames,obj.content[has_colnames])
                            
     is_function <- (obj.type == "function")
     obj.content[is_function] <- napply(names[is_function], function(x) paste(strsplit(repr_text(x),")")[[1]][1],")",sep=""))
