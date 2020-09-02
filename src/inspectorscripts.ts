@@ -32,6 +32,7 @@ __pyspark = None
 __tf = None
 __K = None
 __ipywidgets = None
+__torch = None
 
 
 def _check_imported():
