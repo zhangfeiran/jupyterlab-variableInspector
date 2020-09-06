@@ -275,7 +275,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
                                
     # obj.colnames <- napply(names, colnames)
     # has_colnames <- obj.colnames != "NULL"
-    has_colnames <- (obj.type != "table" & obj.type != 'array' & obj.size < 1048576)
+    has_colnames <- (obj.type != "table" & obj.type != "by" & obj.type != 'array' & obj.size < 1048576)
     obj.colnames <- rep("NA", length(names))
     obj.colnames[has_colnames] <- napply(names[has_colnames], colnames)
     has_colnames <- has_colnames & obj.colnames != "NULL"
