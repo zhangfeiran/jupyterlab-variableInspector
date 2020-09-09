@@ -249,7 +249,10 @@ def _jupyterlab_variableinspector_deletevariable(x):
     obj.class <- napply(names, function(x) as.character(class(x))[1])
     obj.mode <- napply(names, mode)
     obj.type <- ifelse(is.na(obj.class), obj.mode, obj.class)
-    obj.size <- napply(names, object.size)
+    
+    obj.size <- rep(object.size(0), length(names))
+    obj.size[names!='ppi'] <- napply(names[names!='ppi'], object.size)
+    
     obj.dim <- t(napply(names, function(x) as.numeric(dim(x))[1:2]))
     obj.content <- rep("NA", length(names))
     has_no_dim <- is.na(obj.dim)[1:length(names)]                        
