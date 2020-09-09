@@ -255,7 +255,8 @@ def _jupyterlab_variableinspector_deletevariable(x):
     has_no_dim <- is.na(obj.dim)[1:length(names)]                        
     obj.dim[has_no_dim, 1] <- napply(names, length)[has_no_dim]
     
-    vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 1048576)
+    #vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 1048576)
+    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table') & obj.size < 1048576)
     obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
                       
     # obj.rownames <- napply(names, rownames)
