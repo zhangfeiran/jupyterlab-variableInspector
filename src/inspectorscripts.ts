@@ -250,50 +250,21 @@ def _jupyterlab_variableinspector_deletevariable(x):
     obj.mode <- napply(names, mode)
     obj.type <- ifelse(is.na(obj.class), obj.mode, obj.class)
     
-    obj.size <- rep(1048576, length(names))
-    obj.size[names!='ppi'] <- napply(names[names!='ppi'], object.size)
-    
     obj.dim <- t(napply(names, function(x) as.numeric(dim(x))[1:2]))
-    obj.content <- rep("NA", length(names))
     has_no_dim <- is.na(obj.dim)[1:length(names)]                        
     obj.dim[has_no_dim, 1] <- napply(names, length)[has_no_dim]
     
-    #vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 1048576)
-    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table') & obj.size < 1048576)
-    obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
-                      
-    # obj.rownames <- napply(names, rownames)
-    # has_rownames <- obj.rownames != "NULL"
-    has_rownames = obj.size < 1048576
-    obj.rownames <- rep("NA", length(names))
-    obj.rownames[has_rownames] = napply(names[has_rownames], rownames)
-    has_rownames = has_rownames & obj.rownames != "NULL"
+    toolarge = napply(names,function(x){a=dim(x);ifelse(is.null(a),length(x),prod(a))}) >= 1048576
+    obj.size <- rep(8388608, length(names))
+    obj.size[!toolarge] <- napply(names[!toolarge], object.size)
+    
+    obj.content <- rep("NA", length(names))
+    # vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 8388608)
+    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table','data.table') & obj.size < 8388608)
+    # obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
+    obj.content[vec] <- napply(names[vec], function(x) {a=capture.output(str(x));paste(a[1:min(length(a),10)],collapse="")})
 
-    obj.rownames <- sapply(obj.rownames[has_rownames], function(x) paste(x,
-        collapse=", "))
-    obj.rownames.short <- sapply(obj.rownames, function(x) paste(substr(x, 1, 150), "...."))
-    obj.rownames <- ifelse(nchar(obj.rownames) > 154, obj.rownames.short, obj.rownames)
-    obj.rownames <- sapply(obj.rownames, function(x) paste("Row names: ",x))
-    obj.content[has_rownames] <- paste(obj.rownames,obj.content[has_rownames])
-                               
-                               
-    # obj.colnames <- napply(names, colnames)
-    # has_colnames <- obj.colnames != "NULL"
-    has_colnames <- (obj.type != "table" & obj.type != "by" & obj.type != 'array' & obj.size < 1048576)
-    obj.colnames <- rep("NA", length(names))
-    obj.colnames[has_colnames] <- napply(names[has_colnames], colnames)
-    has_colnames <- has_colnames & obj.colnames != "NULL"
-
-    obj.colnames <- sapply(obj.colnames[has_colnames], function(x) paste(x, 
-        collapse = ", "))
-    obj.colnames.short <- sapply(obj.colnames, function(x) paste(substr(x, 
-        1, 150), "...."))
-    obj.colnames <- ifelse(nchar(obj.colnames) > 154, obj.colnames.short, 
-        obj.colnames)
-    obj.colnames <- sapply(obj.colnames, function(x) paste("Column names: ",x))
-                    
-    obj.content[has_colnames] <- paste(obj.colnames,obj.content[has_colnames])
-                           
+    
     is_function <- (obj.type == "function")
     obj.content[is_function] <- napply(names[is_function], function(x) paste(strsplit(repr_text(x),")")[[1]][1],")",sep=""))
     obj.content <- unlist(obj.content, use.names = FALSE)
