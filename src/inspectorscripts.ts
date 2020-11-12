@@ -260,9 +260,9 @@ def _jupyterlab_variableinspector_deletevariable(x):
     
     obj.content <- rep("NA", length(names))
     # vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 8388608)
-    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table','data.table') & obj.size < 8388608)
+    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table','data.table','tbl_df') & obj.size < 8388608)
     # obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
-    obj.content[vec] <- napply(names[vec], function(x) {a=capture.output(str(x,give.head=T));paste(a[1:min(length(a),5)],collapse=" || ")})
+    obj.content[vec] <- napply(names[vec], function(x) {a=capture.output(str(x,give.head=T));paste(a[1:min(length(a),5)],collapse=rawToChar(as.raw(c(92,110))))})
 
     
     is_function <- (obj.type == "function")
