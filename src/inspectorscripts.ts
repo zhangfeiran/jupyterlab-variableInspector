@@ -246,7 +246,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
     if (length(names) == 0) {
         return(jsonlite::toJSON(data.frame()))
     }
-    obj.class <- napply(names, function(x) as.character(class(x))[1])
+    obj.class <- napply(names, function(x) paste(as.character(class(x)),collapse=rawToChar(as.raw(c(92,110)))))
     obj.mode <- napply(names, mode)
     obj.type <- ifelse(is.na(obj.class), obj.mode, obj.class)
     
@@ -254,15 +254,9 @@ def _jupyterlab_variableinspector_deletevariable(x):
     has_no_dim <- is.na(obj.dim)[1:length(names)]                        
     obj.dim[has_no_dim, 1] <- napply(names, length)[has_no_dim]
     
-    toolarge = napply(names,function(x){a=dim(x);ifelse(is.null(a),length(x),prod(a))}) >= 1048576
-    obj.size <- rep(8388608, length(names))
-    obj.size[!toolarge] <- napply(names[!toolarge], object.size)
+    obj.size=rep(0,length(names))
     
-    obj.content <- rep("NA", length(names))
-    # vec <- (obj.type != "function" & obj.type != 'Seurat' & obj.type != 'CellDataSet' & obj.type != 'AnnotatedDataFrame' & obj.size < 8388608)
-    vec <- (obj.type %in% c('numeric','integer','character','data.frame','list','matrix','array','logical','string','factor','ordered','table','data.table','tbl_df') & obj.size < 8388608)
-    # obj.content[vec] <- napply(names[vec], function(x) toString(x, width = 154)[1])
-    obj.content[vec] <- napply(names[vec], function(x) {a=capture.output(str(x,give.head=T));paste(a[1:min(length(a),5)],collapse=rawToChar(as.raw(c(92,110))))})
+    obj.content <- napply(names, function(x) {a=capture.output(str(x,max.level=1,comp.str=" $ ",list.len=4));paste(a,collapse=rawToChar(as.raw(c(92,110))))})
 
     
     is_function <- (obj.type == "function")
