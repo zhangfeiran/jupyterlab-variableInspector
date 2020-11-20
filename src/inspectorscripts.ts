@@ -256,7 +256,9 @@ def _jupyterlab_variableinspector_deletevariable(x):
     
     obj.size=rep(0,length(names))
     
-    obj.content <- napply(names, function(x) {a=capture.output(str(x,max.level=1,comp.str=" $ ",list.len=4));paste(a,collapse=rawToChar(as.raw(c(92,110))))})
+    wtf=napply(names,function(x) {'patchwork' %in% class(x)})
+    obj.content=rep("NA",length(names))
+    obj.content[!wtf] <- napply(names[!wtf], function(x) {a=capture.output(str(x,max.level=1,comp.str=" $ ",list.len=4));paste(a[1:min(length(a),5)],collapse=rawToChar(as.raw(c(92,110))))})
 
     
     is_function <- (obj.type == "function")
