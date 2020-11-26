@@ -243,6 +243,8 @@ def _jupyterlab_variableinspector_deletevariable(x):
     napply <- function(names, fn) sapply(names, function(x) fn(get(x, 
         pos = pos)))
     names <- ls(pos = pos, pattern = pattern)
+    names = c(names,'.Last.value')
+
     if (length(names) == 0) {
         return(jsonlite::toJSON(data.frame()))
     }
