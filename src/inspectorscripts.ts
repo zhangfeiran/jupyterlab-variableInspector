@@ -45,33 +45,34 @@ def _check_imported():
     if 'pandas' in sys.modules:
         import pandas as __pd
 
-    if 'pyspark' in sys.modules:
-        import pyspark as __pyspark
+    # if 'pyspark' in sys.modules:
+    #     import pyspark as __pyspark
 
-    if 'tensorflow' in sys.modules or 'keras' in sys.modules:
-        import tensorflow as __tf
+    # if 'tensorflow' in sys.modules or 'keras' in sys.modules:
+    #     import tensorflow as __tf
+
+    # try:
+    #     import keras.backend as __K
+    # except ImportError:
+    #     try:
+    #         import tensorflow.keras.backend as __K
+    #     except ImportError:
+    #         __K = None
+
     if 'torch' in sys.modules:
         import torch as __torch
 
-        try:
-            import keras.backend as __K
-        except ImportError:
-            try:
-                import tensorflow.keras.backend as __K
-            except ImportError:
-                __K = None
-
-    if 'ipywidgets' in sys.modules:
-        import ipywidgets as __ipywidgets
+    # if 'ipywidgets' in sys.modules:
+    #     import ipywidgets as __ipywidgets
 
 
 def _jupyterlab_variableinspector_getsizeof(x):
     if type(x).__name__ in ['ndarray', 'Series']:
         return x.nbytes
-    elif __pyspark and isinstance(x, __pyspark.sql.DataFrame):
-        return "?"
-    elif __tf and isinstance(x, __tf.Variable):
-        return "?"
+    # elif __pyspark and isinstance(x, __pyspark.sql.DataFrame):
+    #     return "?"
+    # elif __tf and isinstance(x, __tf.Variable):
+    #     return "?"
     elif __torch and isinstance(x, __torch.Tensor):
         return x.element_size() * x.nelement()
     elif __pd and type(x).__name__ == 'DataFrame':
@@ -88,14 +89,14 @@ def _jupyterlab_variableinspector_getshapeof(x):
     if __np and isinstance(x, __np.ndarray):
         shape = " x ".join([str(i) for i in x.shape])
         return "%s" % shape
-    if __pyspark and isinstance(x, __pyspark.sql.DataFrame):
-        return "? rows x %d cols" % len(x.columns)
-    if __tf and isinstance(x, __tf.Variable):
-        shape = " x ".join([str(int(i)) for i in x.shape])
-        return "%s" % shape
-    if __tf and isinstance(x, __tf.Tensor):
-        shape = " x ".join([str(int(i)) for i in x.shape])
-        return "%s" % shape
+    # if __pyspark and isinstance(x, __pyspark.sql.DataFrame):
+    #     return "? rows x %d cols" % len(x.columns)
+    # if __tf and isinstance(x, __tf.Variable):
+    #     shape = " x ".join([str(int(i)) for i in x.shape])
+    #     return "%s" % shape
+    # if __tf and isinstance(x, __tf.Tensor):
+    #     shape = " x ".join([str(int(i)) for i in x.shape])
+    #     return "%s" % shape
     if __torch and isinstance(x, __torch.Tensor):
         shape = " x ".join([str(int(i)) for i in x.shape])
         return "%s" % shape
@@ -103,7 +104,7 @@ def _jupyterlab_variableinspector_getshapeof(x):
         return "%s" % len(x)
     if isinstance(x, dict):
         return "%s keys" % len(x)
-    return None
+    return ''
 
 
 def _jupyterlab_variableinspector_getcontentof(x):
@@ -125,8 +126,8 @@ def _jupyterlab_variableinspector_getcontentof(x):
     else:
         content = str(x)
 
-    if len(content) > 150:
-        return content[:150] + " ..."
+    if len(content) > 50:
+        return content[:50] + " ..."
     else:
         return content
 
@@ -139,12 +140,12 @@ def _jupyterlab_variableinspector_is_matrix(x):
         return True
     if __np and isinstance(x, __np.ndarray) and len(x.shape) <= 2:
         return True
-    if __pyspark and isinstance(x, __pyspark.sql.DataFrame):
-        return True
-    if __tf and isinstance(x, __tf.Variable) and len(x.shape) <= 2:
-        return True
-    if __tf and isinstance(x, __tf.Tensor) and len(x.shape) <= 2:
-        return True
+    # if __pyspark and isinstance(x, __pyspark.sql.DataFrame):
+    #     return True
+    # if __tf and isinstance(x, __tf.Variable) and len(x.shape) <= 2:
+    #     return True
+    # if __tf and isinstance(x, __tf.Tensor) and len(x.shape) <= 2:
+    #     return True
     if isinstance(x, list):
         return True
     return False
@@ -159,39 +160,53 @@ def _jupyterlab_variableinspector_dict_list():
     def keep_cond(v):
         try:
             obj = eval(v)
-            if isinstance(obj, str):
+            if isinstance(obj, (str, list, dict)):
                 return True
-            if __tf and isinstance(obj, __tf.Variable):
-                return True
+            # if __tf and isinstance(obj, __tf.Variable):
+            #     return True
             if __torch and isinstance(obj, __torch.Tensor):
                 return True
             if __pd and __pd is not None and (
                 isinstance(obj, __pd.core.frame.DataFrame)
                 or isinstance(obj, __pd.core.series.Series)):
                 return True
+            if v in ['__np', '__pd', '__pyspark', '__tf', '__K', '__ipywidgets', '__torch']:
+                return obj is not None
             if str(obj)[0] == "<":
                 return False
-            if  v in ['__np', '__pd', '__pyspark', '__tf', '__K', '__ipywidgets', '__torch']:
-                return obj is not None
-            if str(obj).startswith("_Feature"):
+            # if str(obj).startswith("_Feature"):
                 # removes tf/keras objects
-                return False
+                # return False
             return True
         except:
             return False
     values = _jupyterlab_variableinspector_nms.who_ls()
-    vardic = [
-        {
-            'varName': _v,
-            'varType': type(eval(_v)).__name__, 
-            'varSize': str(_jupyterlab_variableinspector_getsizeof(eval(_v))), 
-            'varShape': str(_jupyterlab_variableinspector_getshapeof(eval(_v))) if _jupyterlab_variableinspector_getshapeof(eval(_v)) else '', 
-            'varContent': str(_jupyterlab_variableinspector_getcontentof(eval(_v))), 
-            'isMatrix': _jupyterlab_variableinspector_is_matrix(eval(_v)),
-            'isWidget': _jupyterlab_variableinspector_is_widget(type(eval(_v)))
-        }
-        for _v in values if keep_cond(_v)
-    ]
+    if 'jupyterlab_variableinspector_disabled' in values:
+        vardic = [
+            {
+                'varName': _v,
+                'varType': type(eval(_v)).__name__, 
+                'varSize': '0', 
+                'varShape': str(_jupyterlab_variableinspector_getshapeof(eval(_v))), 
+                'varContent': str(eval(_v))[:50] if isinstance(eval(_v), (str,int,float)) else '', 
+                'isMatrix': False,
+                'isWidget': False
+            }
+            for _v in values if keep_cond(_v)
+        ]
+    else:
+        vardic = [
+            {
+                'varName': _v,
+                'varType': type(eval(_v)).__name__, 
+                'varSize': '0', 
+                'varShape': str(_jupyterlab_variableinspector_getshapeof(eval(_v))), 
+                'varContent': str(_jupyterlab_variableinspector_getcontentof(eval(_v))), 
+                'isMatrix': False,
+                'isWidget': False
+            }
+            for _v in values if keep_cond(_v)
+        ]
     return json.dumps(vardic, ensure_ascii=False)
 
 
@@ -256,12 +271,14 @@ def _jupyterlab_variableinspector_deletevariable(x):
     has_no_dim <- is.na(obj.dim)[1:length(names)]                        
     obj.dim[has_no_dim, 1] <- napply(names, length)[has_no_dim]
     
-    obj.size=rep(0,length(names))
+    obj.size = rep(0,length(names))
     
-    wtf=napply(names,function(x) {'patchwork' %in% class(x)})
-    obj.content=rep("NA",length(names))
-    obj.content[!wtf] <- napply(names[!wtf], function(x) {a=capture.output(str(x,max.level=1,comp.str=" $ ",list.len=4));paste(a[1:min(length(a),5)],collapse=rawToChar(as.raw(c(92,110))))})
-
+    wtf = napply(names,function(x) {'patchwork' %in% class(x)})
+    obj.content = rep("NA",length(names))
+    if (!'jupyterlab_variableinspector_disabled' %in% names) {
+        obj.content[!wtf] <- napply(names[!wtf], function(x) {a=capture.output(str(x,max.level=1,list.len=4)); b=lapply(a[1:min(length(a),5)], function(x) {paste(substring(x, 1, 50), ifelse(nchar(x) > 50, "...", ""))}); paste(b,collapse=rawToChar(as.raw(c(92,110))))})
+    }
+        
     
     is_function <- (obj.type == "function")
     obj.content[is_function] <- napply(names[is_function], function(x) paste(strsplit(repr_text(x),")")[[1]][1],")",sep=""))
