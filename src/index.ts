@@ -37,8 +37,7 @@ import {
 
 
 namespace CommandIDs {
-    export
-    const open = "variableinspector:open";
+    export const open = "variableinspector:open";
 }
 
 /**
@@ -46,6 +45,7 @@ namespace CommandIDs {
  */
 const variableinspector: JupyterFrontEndPlugin<IVariableInspectorManager> = {
         id: "jupyterlab-extension:variableinspector",
+        // id: '@lckr/jupyterlab_variableinspector',
         requires: [ICommandPalette, ILayoutRestorer, ILabShell],
         provides: IVariableInspectorManager,
         autoStart: true,

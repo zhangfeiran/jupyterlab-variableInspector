@@ -1,3 +1,5 @@
+@import url('base.css');
+
 .jp-VarInspector {
   flex-direction: column;
   overflow: auto;

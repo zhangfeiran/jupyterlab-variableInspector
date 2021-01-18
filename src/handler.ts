@@ -276,11 +276,11 @@ export
     /*
      * Invokes a inspection if the signal emitted from specified session is an 'execute_input' msg.
      */
-    private _queryCall = ( sess: ISessionContext, msg: KernelMessage.IExecuteInputMsg ) => {
+    private _queryCall = ( sess: ISessionContext, msg: KernelMessage.IMessage ) => {
         let msgType = msg.header.msg_type;
         switch ( msgType ) {
             case 'execute_input':
-                let code = msg.content.code;
+                let code = (msg as KernelMessage.IExecuteInputMsg).content.code;
                 if ( !( code == this._queryCommand ) && !( code == this._matrixQueryCommand ) && !( code.startsWith(this._widgetQueryCommand) ) ) {
                     this.performInspection();
                 }
