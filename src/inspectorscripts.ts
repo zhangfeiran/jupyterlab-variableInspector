@@ -181,7 +181,7 @@ def _jupyterlab_variableinspector_dict_list():
         except:
             return False
     values = _jupyterlab_variableinspector_nms.who_ls()
-    if 'jupyterlab_variableinspector_disabled' in values:
+    if 'jlvi_brief' in values:
         vardic = [
             {
                 'varName': _v,
@@ -252,12 +252,16 @@ def _jupyterlab_variableinspector_deletevariable(x):
 
     static r_script: string = `library(repr)
 
+.Last.value = 'wtf'
+
 .ls.objects = function (pos = 1, pattern, order.by, decreasing = FALSE, head = FALSE, 
     n = 5) 
 {
     napply <- function(names, fn) sapply(names, function(x) fn(get(x, 
         pos = pos)))
     names <- ls(pos = pos, pattern = pattern)
+    
+    if (class(base::.Last.value) != 'json') .Last.value <<- base::.Last.value
     names = c('.Last.value',names)
 
     if (length(names) == 0) {
@@ -275,7 +279,7 @@ def _jupyterlab_variableinspector_deletevariable(x):
     
     wtf = napply(names,function(x) {'patchwork' %in% class(x)})
     obj.content = rep("NA",length(names))
-    if (!'jupyterlab_variableinspector_disabled' %in% names) {
+    if (!'jlvi_brief' %in% names) {
         obj.content[!wtf] <- napply(names[!wtf], function(x) {a=capture.output(str(x,max.level=1,list.len=4)); b=lapply(a[1:min(length(a),5)], function(x) {paste(substring(x, 1, 50), ifelse(nchar(x) > 50, "...", ""))}); paste(b,collapse=rawToChar(as.raw(c(92,110))))})
     }
         
