@@ -1,21 +1,8 @@
-# a mybinder.org-ready environment for demoing lckr_jupyterlab_variableinspector
-# this environment may also be used locally on Linux/MacOS/Windows, e.g.
-#
-#   conda env update --file binder/environment.yml
-#   conda activate lckr_jupyterlab_variableinspector-demo
-#
-name: lckr_jupyterlab_variableinspector-demo
-
+name: jupyterlab-variable-inspector
 channels:
-  - conda-forge
-
+- conda-forge
 dependencies:
-  # runtime dependencies
-  - python >=3.8,<3.9.0a0
-  - jupyterlab >=3,<4.0.0a0
-  # labextension build dependencies
-  - nodejs >=14,<15
-  - pip
-  - wheel
-  # additional packages for demos
-  # - ipywidgets
+- ipywidgets=7
+- jupyterlab=1
+- numpy
+- pandas
